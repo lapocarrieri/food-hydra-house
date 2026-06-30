@@ -1,0 +1,220 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Food Hydra House</title>
+  <link rel="stylesheet" href="styles.css" />
+</head>
+<body>
+  <section id="loginScreen" class="loginScreen" aria-label="Choose profile">
+    <div class="loginCard">
+      <div class="brandRow"><span class="logoMark">FH</span><span>Food Hydra House</span></div>
+      <h1>Who is planning?</h1>
+      <p>Choose your profile so every preference, dish, availability change, and plan edit is linked to you.</p>
+      <div class="profileButtons">
+        <button class="profileBtn" data-login="Gioi"><span class="loginName"><img src="assets/gioi-avatar.png" alt="Gioi"><strong>I am Gioi</strong></span><span>Personal tastes, cooking turns, and history.</span></button>
+        <button class="profileBtn" data-login="Punzel"><span class="loginName"><img src="assets/punzel-avatar.png" alt="Punzel"><strong>I am Punzel</strong></span><span>Own availability, likes, and meal picks.</span></button>
+        <button class="profileBtn guest" data-login="Guest"><strong>I am an external guest</strong><span>Join, propose, vote, and mark availability with limited permissions.</span></button>
+      </div>
+    </div>
+  </section>
+
+  <header class="appHeader">
+    <section class="heroText">
+      <div class="brandRow"><span class="logoMark">FH</span><span>Food Hydra House</span></div>
+      <h1>The shared meal planner that keeps everyone aligned.</h1>
+      <p>Availability, personal preferences, cooking energy, weekly suggestions, grocery lists, and meal history in one friendly place.</p>
+    </section>
+    <section class="sharePanel" aria-label="Plan sharing">
+      <div class="shareTop">
+        <div><strong id="currentProfileLabel">Signed in</strong><span id="syncStatus">Saved on this device</span></div>
+        <button id="switchProfileBtn" class="softBtn">Switch user</button>
+      </div>
+      <label>Plan name <input id="planName" value="HYDRA-WEEK" /></label>
+      <div class="buttonGrid">
+        <button id="copyLinkBtn" class="primaryBtn">Copy share link</button>
+        <button id="copyCodeBtn">Copy code</button>
+        <button id="importCodeBtn">Import code</button>
+        <button id="newWeekBtn">New week</button>
+      </div>
+    </section>
+  </header>
+
+  <main class="appLayout">
+    <aside class="sidebar">
+      <section class="panel profilePanel">
+        <div class="panelTitle"><h2>Your profile</h2><span id="profileBadge" class="tag">Guest</span></div>
+        <p id="profileSummary" class="mutedText"></p>
+        <div id="personalQuickStats" class="miniStats"></div>
+      </section>
+
+      <section class="panel">
+        <div class="panelTitle"><h2>People</h2><button id="addPersonBtn" class="iconBtn" title="Add guest">+</button></div>
+        <div id="peopleList" class="peopleList"></div>
+      </section>
+
+      <section class="panel insightPanel">
+        <h2>Smart tips</h2>
+        <div id="smartTips" class="tips"></div>
+      </section>
+    </aside>
+
+    <section class="workspace">
+      <nav class="tabs" aria-label="App sections">
+        <button class="tab active" data-tab="my">My page</button>
+        <button class="tab" data-tab="week">Week</button>
+        <button class="tab" data-tab="suggest">Choose meal</button>
+        <button class="tab" data-tab="ingredients">Ingredients AI</button>
+        <button class="tab" data-tab="shopping">Groceries</button>
+        <button class="tab" data-tab="stores">Stores</button>
+        <button class="tab" data-tab="stats">Stats</button>
+        <button class="tab" data-tab="dishes">Dishes</button>
+      </nav>
+
+      <section id="myTab" class="tabPanel active">
+        <div class="sectionHead"><div><h2 id="myPageTitle">My page</h2><p>Your availability, favorites, and actions are kept separate from everyone else's.</p></div><button id="saveMyPrefsBtn" class="primaryBtn">Save my preferences</button></div>
+        <div class="personalGrid">
+          <article class="personalCard">
+            <h3>This week</h3>
+            <div id="myAvailability" class="availabilityGrid"></div>
+          </article>
+          <article class="personalCard">
+            <h3>My taste profile</h3>
+            <p class="mutedText">Pick what you usually like. Suggestions will lean toward these when planning for you.</p>
+            <div id="myLikes" class="chipGroup"></div>
+          </article>
+          <article class="personalCard">
+            <h3>My added dishes</h3>
+            <div id="myDishes" class="compactList"></div>
+          </article>
+          <article class="personalCard">
+            <h3>My upcoming meals</h3>
+            <div id="myMeals" class="compactList"></div>
+          </article>
+        </div>
+      </section>
+
+      <section id="weekTab" class="tabPanel">
+        <div class="sectionHead"><div><h2>Weekly plan</h2><p>Each day tracks who is coming, who cooks, and who chose the meal.</p></div><button id="autoPlanBtn" class="primaryBtn">Suggest the whole week</button></div>
+        <section id="weekChooserPopup" class="weekChooserPopup hidden"></section>
+        <div id="weekGrid" class="weekGrid"></div>
+      </section>
+
+      <section id="suggestTab" class="tabPanel">
+        <div class="sectionHead"><div><h2>Choose what to eat</h2><p>Plan one day at a time: type an idea, get inspired with day filters, add multiple proposals, then pick the winner together.</p></div><button id="surpriseBtn" class="primaryBtn">Add inspiration option</button></div>
+        <section class="choiceBuilder">
+          <div class="choiceRow">
+            <label>For which day?<select id="targetDaySelect"></select></label>
+            <label>I feel like eating <input id="mealSearch" placeholder="Type a dish, ingredient, cuisine, or tag" /></label>
+          </div>
+          <div class="choiceActions">
+            <button id="useTypedDishBtn" class="primaryBtn">Propose this dish</button>
+            <button id="helpMeChooseBtn">Inspire me</button>
+            <button id="clearMealSearchBtn">Clear search</button>
+          </div>
+          <section id="inspirationPanel" class="inspirationPanel hidden">
+            <div class="panelTitle"><h3>Day inspiration filters</h3><button id="resetFiltersBtn" class="textBtn">Reset</button></div>
+            <label class="fieldLabel">Planning for <select id="activePersonSelect"></select></label>
+            <p class="mutedText">These filters apply only to the selected day.</p>
+            <p class="question">What cuisine sounds good?</p><div id="cuisineFilters" class="chipGroup"></div>
+            <p class="question">How heavy should it be?</p><div id="weightFilters" class="chipGroup"></div>
+            <p class="question">How much cooking energy?</p><div id="effortFilters" class="chipGroup"></div>
+            <p class="question">Useful tags</p><div id="tagFilters" class="chipGroup"></div>
+          </section>
+        </section>
+        <section class="proposalPanel">
+          <div class="panelTitle"><h3 id="proposalTitle">Options for this day</h3><span class="tag" id="servingTag">2 people</span></div>
+          <div id="dayProposals" class="proposalList"></div>
+        </section>
+        <div id="recommendations" class="dishGrid"></div>
+      </section>
+
+      <section id="ingredientsTab" class="tabPanel">
+        <div class="sectionHead"><div><h2>Ingredients AI</h2><p>Write what you have at home. The app matches your ingredients to the best dish combinations and opens wider recipe searches when you want external inspiration.</p></div><button id="matchIngredientsBtn" class="primaryBtn">Find dishes</button></div>
+        <section class="ingredientAiBox">
+          <label>Ingredients you have
+            <textarea id="ingredientInput" placeholder="Example: chicken, rice, lemon, feta, zucchini, eggs"></textarea>
+          </label>
+          <div class="choiceActions">
+            <button id="clearIngredientsBtn">Clear</button>
+            <button id="proposeIngredientBestBtn">Propose best for selected day</button>
+          </div>
+        </section>
+        <div id="ingredientResults" class="dishGrid"></div>
+      </section>
+
+      <section id="shoppingTab" class="tabPanel">
+        <div class="sectionHead"><div><h2>Grocery list</h2><p>Main ingredients are separated from pantry items you probably already have.</p></div><div class="choiceActions"><button id="copyShoppingBtn">Copy list</button><button id="whatsappShoppingBtn" class="primaryBtn">Send to WhatsApp</button></div></div>
+        <section class="shoppingControls">
+          <div>
+            <strong>Generate list for</strong>
+            <span id="todayLabel">Today</span>
+          </div>
+          <div class="segmented">
+            <button class="rangeBtn" data-shopping-days="1">Today</button>
+            <button class="rangeBtn" data-shopping-days="2">2 days</button>
+            <button class="rangeBtn" data-shopping-days="3">3 days</button>
+            <button class="rangeBtn" data-shopping-days="5">Workweek</button>
+            <button class="rangeBtn" data-shopping-days="7">7 days</button>
+          </div>
+        </section>
+        <div id="shoppingList" class="shoppingGrid"></div>
+      </section>
+
+      <section id="storesTab" class="tabPanel">
+        <div class="sectionHead"><div><h2>Store preferences</h2><p>Choose where each ingredient is better to buy. Groceries will be grouped by supermarket.</p></div><button id="resetStoresBtn">Reset stores</button></div>
+        <input id="storeSearch" class="searchInput" placeholder="Search ingredient, e.g. parmesan, pasta, noodles" />
+        <div id="storePreferenceList" class="storeGrid"></div>
+      </section>
+
+      <section id="statsTab" class="tabPanel">
+        <div class="sectionHead"><div><h2>Meal stats</h2><p>Check variety, heaviness, chosen cuisines, repeated meals, and personal activity.</p></div><button id="markEatenBtn">Mark week as eaten</button></div>
+        <div id="statsBoard" class="statsGrid"></div>
+      </section>
+
+      <section id="dishesTab" class="tabPanel">
+        <div class="sectionHead"><div><h2>Favorite dishes</h2><p>All dishes from the chat are already here. New dishes are saved under your profile.</p></div><button id="addDishBtn" class="primaryBtn">Add dish</button></div>
+        <input id="dishSearch" class="searchInput" placeholder="Search dish, tag, owner, or cuisine" />
+        <div id="dishLibrary" class="dishGrid"></div>
+      </section>
+    </section>
+  </main>
+
+  <dialog id="dishDialog">
+    <form method="dialog" id="dishForm" class="dialogCard">
+      <h2>Add a dish</h2>
+      <label>Name <input id="newDishName" required /></label>
+      <label>Cuisine <input id="newDishCuisine" placeholder="Italian, Thai, Mexican..." /></label>
+      <label>Main ingredients <textarea id="newDishMain" placeholder="pasta, tomato, basil"></textarea></label>
+      <label>Likely pantry items <textarea id="newDishPantry" placeholder="oil, salt, pepper"></textarea></label>
+      <div class="dialogActions"><button value="cancel">Cancel</button><button id="saveDishBtn" class="primaryBtn" value="default">Save for me</button></div>
+    </form>
+  </dialog>
+
+  <dialog id="dishDetailDialog">
+    <form method="dialog" id="dishDetailForm" class="dialogCard detailDialog">
+      <div class="panelTitle"><h2 id="detailTitle">Dish details</h2><span id="detailOwner" class="tag">Dish</span></div>
+      <label>Name <input id="detailName" required /></label>
+      <div class="choiceRow">
+        <label>Cuisine <input id="detailCuisine" /></label>
+        <label>Weight <select id="detailWeight"></select></label>
+      </div>
+      <label>Effort <select id="detailEffort"></select></label>
+      <label>Tags <input id="detailTags" placeholder="quick, pasta, comfort" /></label>
+      <label>Main ingredients <textarea id="detailMain"></textarea></label>
+      <label>Likely pantry items <textarea id="detailPantry"></textarea></label>
+      <label>Plan or propose for <select id="detailDay"></select></label>
+      <div class="dialogActions">
+        <button value="cancel">Close</button>
+        <button id="detailEditBtn" value="default">Edit dinner</button>
+        <button id="detailSaveBtn" class="primaryBtn" value="default">Save changes</button>
+        <button id="detailProposeBtn" value="default">Propose for day</button>
+        <button id="detailPlanBtn" value="default">Set as dinner</button>
+      </div>
+    </form>
+  </dialog>
+
+  <script src="app.js"></script>
+</body>
+</html>
